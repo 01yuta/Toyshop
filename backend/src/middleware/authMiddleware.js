@@ -16,6 +16,11 @@ const parseToken = (req) => {
 
 const authMiddleware = async (req, res, next) => {
   try {
+    if (!process.env.JWT_SECRET) {
+      console.error('JWT_SECRET is not configured');
+      return res.status(500).json({ message: "Server configuration error" });
+    }
+
     const token = parseToken(req);
     if (!token) {
       return res.status(401).json({ message: "Unauthorized" });

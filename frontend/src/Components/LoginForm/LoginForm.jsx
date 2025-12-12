@@ -7,8 +7,8 @@ import {
   LockOutlined,
 } from "@ant-design/icons";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import axios from "axios";
 import { useAuth } from "../../Context/AuthContext";
+import authApi from "../../api/authApi";
 import "./LoginForm.css";
 
 const LoginForm = () => {
@@ -29,7 +29,7 @@ const LoginForm = () => {
     try {
       setLoading(true);
 
-      const res = await axios.post("http://localhost:3001/api/auth/login", {
+      const res = await authApi.login({
         email,
         password,
       });

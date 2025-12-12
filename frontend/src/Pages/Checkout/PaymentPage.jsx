@@ -22,6 +22,7 @@ import { useCheckout } from "../../Context/CheckoutContext";
 import { useAuth } from "../../Context/AuthContext";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import api from "../../api/axiosClient";
 
 const { Title, Text } = Typography;
 
@@ -288,20 +289,16 @@ const PaymentPage = () => {
         const totalWithShipping = (totalPrice || 0) + shippingPrice;
         
         try {
-          const res = await fetch("http://localhost:3001/api/payments/create-intent", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              amount: Math.round(totalWithShipping),
-              currency: "vnd",
-            }),
+          const res = await api.post("/api/payments/create-intent", {
+            amount: Math.round(totalWithShipping),
+            currency: "vnd",
           });
           
-          const data = await res.json();
-          if (res.ok && data.clientSecret) {
+          const data = res.data;
+          if (data && data.clientSecret) {
             setClientSecret(data.clientSecret);
           } else {
-            message.error(data.message || "Lỗi tạo payment intent");
+            message.error(data?.message || "Lỗi tạo payment intent");
           }
         } catch (err) {
           message.error("Lỗi kết nối server. Vui lòng thử lại.");

@@ -46,6 +46,12 @@ const login = async ({ email, password }) => {
     throw error;
   }
 
+  if (!process.env.JWT_SECRET) {
+    const error = new Error('JWT_SECRET is not configured');
+    error.code = 'SERVER_ERROR';
+    throw error;
+  }
+
   const payload = { id: user._id, isAdmin: user.isAdmin };
 
   const accessToken = jwt.sign(payload, process.env.JWT_SECRET, {

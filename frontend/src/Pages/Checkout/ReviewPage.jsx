@@ -137,35 +137,28 @@ const ReviewPage = () => {
             status: "succeeded",
           };
         } else {
-          const verifyRes = await fetch(
-            "http://localhost:3001/api/payments/verify",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                paymentIntentId: paymentInfo.paymentIntentId,
-              }),
+          try {
+            const verifyRes = await api.post("/api/payments/verify", {
+              paymentIntentId: paymentInfo.paymentIntentId,
+            });
+
+            const verifyData = verifyRes.data;
+
+            if (!verifyData || verifyData.status !== "succeeded") {
+              message.error(verifyData?.message || "Lỗi xác minh thanh toán. Vui lòng thử lại.");
+              setLoading(false);
+              return;
             }
-          );
 
-          const verifyData = await verifyRes.json();
-
-          if (!verifyRes.ok) {
-            message.error(verifyData.message || "Lỗi xác minh thanh toán. Vui lòng thử lại.");
+            payload.paymentResult = {
+              ...payload.paymentResult,
+              status: verifyData.status,
+            };
+          } catch (verifyErr) {
+            message.error("Lỗi xác minh thanh toán. Vui lòng thử lại.");
             setLoading(false);
             return;
           }
-
-          if (verifyData.status !== "succeeded") {
-            message.error("Thanh toán chưa hoàn tất. Vui lòng thử lại.");
-            setLoading(false);
-            return;
-          }
-
-          payload.paymentResult = {
-            ...payload.paymentResult,
-            status: verifyData.status,
-          };
         }
       }
 
