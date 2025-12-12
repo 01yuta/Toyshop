@@ -11,6 +11,17 @@ const normalizeImageUrl = (url, baseUrl) => {
     return `${baseUrl}${url}`;
   }
 
+  if (url.includes('localhost:3001') || url.includes('localhost:3000')) {
+    try {
+      const parsed = new URL(url);
+      parsed.host = new URL(baseUrl).host;
+      parsed.protocol = new URL(baseUrl).protocol;
+      return parsed.toString();
+    } catch {
+      return url;
+    }
+  }
+
   if (url.startsWith('http://localhost') || url.startsWith('https://localhost')) {
     try {
       const parsed = new URL(url);
@@ -142,9 +153,16 @@ const getProducts = async (req, res) => {
   try {
     const baseUrl = getAssetBaseUrl(req);
     const result = await ProductService.getProducts(req.query);
+    const normalizedItems = result.items.map((item) => {
+      const normalized = normalizeProductDoc(item, baseUrl);
+      if (normalized.images && normalized.images.length > 0) {
+        console.log(`Product ${normalized.name}: First image URL = ${normalized.images[0]}`);
+      }
+      return normalized;
+    });
     return res.status(200).json({
       ...result,
-      items: result.items.map((item) => normalizeProductDoc(item, baseUrl)),
+      items: normalizedItems,
     });
   } catch (err) {
     console.error(err);
