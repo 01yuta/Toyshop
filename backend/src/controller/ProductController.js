@@ -1,5 +1,41 @@
 const ProductService = require('../services/ProductService');
 
+const getAssetBaseUrl = (req) => {
+  return process.env.ASSET_BASE_URL || `${req.protocol}://${req.get('host')}`;
+};
+
+const normalizeImageUrl = (url, baseUrl) => {
+  if (!url) return url;
+
+  if (url.startsWith('/uploads/')) {
+    return `${baseUrl}${url}`;
+  }
+
+  if (url.startsWith('http://localhost') || url.startsWith('https://localhost')) {
+    try {
+      const parsed = new URL(url);
+      parsed.host = new URL(baseUrl).host;
+      parsed.protocol = new URL(baseUrl).protocol;
+      return parsed.toString();
+    } catch {
+      return url;
+    }
+  }
+
+  return url;
+};
+
+const normalizeProductDoc = (product, baseUrl) => {
+  if (!product) return product;
+  const obj = product.toObject ? product.toObject() : { ...product };
+
+  if (Array.isArray(obj.images)) {
+    obj.images = obj.images.map((img) => normalizeImageUrl(img, baseUrl));
+  }
+
+  return obj;
+};
+
 const normalizeProductPayload = (payload = {}) => {
   const data = { ...payload };
 
@@ -94,7 +130,7 @@ const createProduct = async (req, res) => {
     const product = await ProductService.createProduct(payload);
     return res.status(201).json({
       message: 'Product created successfully',
-      data: product,
+      data: normalizeProductDoc(product, getAssetBaseUrl(req)),
     });
   } catch (err) {
     console.error(err);
@@ -104,8 +140,12 @@ const createProduct = async (req, res) => {
 
 const getProducts = async (req, res) => {
   try {
+    const baseUrl = getAssetBaseUrl(req);
     const result = await ProductService.getProducts(req.query);
-    return res.status(200).json(result);
+    return res.status(200).json({
+      ...result,
+      items: result.items.map((item) => normalizeProductDoc(item, baseUrl)),
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'Server error' });
@@ -114,11 +154,12 @@ const getProducts = async (req, res) => {
 
 const getProductById = async (req, res) => {
   try {
+    const baseUrl = getAssetBaseUrl(req);
     const product = await ProductService.getProductById(req.params.id);
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
-    return res.status(200).json(product);
+    return res.status(200).json(normalizeProductDoc(product, baseUrl));
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'Server error' });
@@ -156,7 +197,7 @@ const updateProduct = async (req, res) => {
     }
     return res.status(200).json({
       message: 'Product updated successfully',
-      data: product,
+      data: normalizeProductDoc(product, getAssetBaseUrl(req)),
     });
   } catch (err) {
     console.error(err);
@@ -232,7 +273,7 @@ const updateProductStock = async (req, res) => {
 
     return res.status(200).json({
       message: 'Stock updated successfully',
-      data: product,
+      data: normalizeProductDoc(product, getAssetBaseUrl(req)),
     });
   } catch (err) {
     console.error(err);
@@ -242,13 +283,14 @@ const updateProductStock = async (req, res) => {
 
 const getRelatedProducts = async (req, res) => {
   try {
+    const baseUrl = getAssetBaseUrl(req);
     const related = await ProductService.getRelatedProducts(req.params.id, req.query);
     if (!related) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
     return res.status(200).json({
-      items: related,
+      items: related.map((item) => normalizeProductDoc(item, baseUrl)),
       count: related.length,
     });
   } catch (err) {
