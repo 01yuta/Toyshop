@@ -1,0 +1,40 @@
+.scale-header-section {
+  background: linear-gradient(90deg, #1e3a8a, #2563eb);
+  padding: 60px 80px;
+  color: white;
+}
+.scale-back {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+  margin-bottom: 30px;
+}
+.scale-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.scale-description {
+  width: 60%;
+  line-height: 1.6;
+  opacity: 0.95;
+}
+.scale-underline {
+  width: 40px;
+  height: 4px;
+  background: #ec4899;
+  margin-top: 20px;
+  border-radius: 10px;
+}
+.scale-subsection {
+  padding: 40px 80px;
+}
+.scale-subsection h3 {
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+.scale-subsection p {
+  color: #555;
+}

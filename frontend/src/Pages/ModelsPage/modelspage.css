@@ -1,0 +1,31 @@
+.models-page {
+  padding: 24px 48px 40px;
+  background: #f5f7fb;
+  min-height: calc(100vh - 64px);
+}
+.models-top {
+  margin-bottom: 16px;
+}
+.models-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #64748b;
+  text-decoration: none;
+  margin-bottom: 12px;
+}
+.models-back:hover {
+  color: #1d4ed8;
+}
+.models-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #0f172a;
+}
+.models-subtitle {
+  margin-top: 4px;
+  color: #64748b;
+  font-size: 13px;
+}

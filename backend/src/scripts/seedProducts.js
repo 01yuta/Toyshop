@@ -1,0 +1,606 @@
+const mongoose = require('mongoose');
+const Product = require('../models/ProductModel');
+require('dotenv').config();
+
+const products = [
+  {
+    name: "RX-78-2 Gundam Ver.Ka",
+    series: "Mobile Suit Gundam",
+    scale: "1/100 MG",
+    price: 45,
+    oldPrice: 52,
+    description: "Master Grade RX-78-2 Gundam Ver.Ka model kit with exceptional detail and articulation.",
+    images: [
+      "https://images.pexels.com/photos/7161083/pexels-photo-7161083.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161082/pexels-photo-7161082.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161080/pexels-photo-7161080.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161070/pexels-photo-7161070.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 15,
+    avgRating: 4.8,
+    ratingCount: 124,
+    isNew: true,
+    discountText: "-13%",
+    category: "Model Kits",
+  },
+  {
+    name: "Strike Freedom Gundam",
+    series: "Gundam SEED Destiny",
+    scale: "1/60 PG",
+    price: 89,
+    oldPrice: null,
+    description: "Perfect Grade Strike Freedom Gundam with full inner frame and LED compatibility.",
+    images: [
+      "https://images.pexels.com/photos/7161070/pexels-photo-7161070.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161083/pexels-photo-7161083.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161082/pexels-photo-7161082.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161080/pexels-photo-7161080.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 8,
+    avgRating: 4.9,
+    ratingCount: 89,
+    isNew: false,
+    discountText: "",
+    category: "Model Kits",
+  },
+  {
+    name: "Barbatos Lupus Rex",
+    series: "Iron-Blooded Orphans",
+    scale: "1/100 MG",
+    price: 32,
+    oldPrice: 38,
+    description: "Master Grade Barbatos Lupus Rex with impressive articulation and weapon accessories.",
+    images: [
+      "https://images.pexels.com/photos/7161080/pexels-photo-7161080.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161083/pexels-photo-7161083.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161070/pexels-photo-7161070.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 20,
+    avgRating: 4.7,
+    ratingCount: 156,
+    isNew: false,
+    discountText: "-15%",
+    category: "Model Kits",
+  },
+  {
+    name: "Nu Gundam Ver.Ka",
+    series: "Char's Counterattack",
+    scale: "1/100 MG",
+    price: 67,
+    oldPrice: null,
+    description: "Master Grade Nu Gundam Ver.Ka with psycho-frame effects and fin funnel system.",
+    images: [
+      "https://images.pexels.com/photos/7161082/pexels-photo-7161082.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161080/pexels-photo-7161080.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161083/pexels-photo-7161083.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 12,
+    avgRating: 4.9,
+    ratingCount: 203,
+    isNew: false,
+    discountText: "",
+    category: "Model Kits",
+  },
+  {
+    name: "Unicorn Gundam Full Armor",
+    series: "Mobile Suit Gundam Unicorn",
+    scale: "1/100 MG",
+    price: 72,
+    oldPrice: 80,
+    description: "Master Grade Unicorn Gundam Full Armor with transformation gimmick and LED unit.",
+    images: [
+      "https://images.pexels.com/photos/7161083/pexels-photo-7161083.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161082/pexels-photo-7161082.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161070/pexels-photo-7161070.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161080/pexels-photo-7161080.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 10,
+    avgRating: 4.8,
+    ratingCount: 178,
+    isNew: true,
+    discountText: "-10%",
+    category: "Model Kits",
+  },
+  {
+    name: "Freedom Gundam",
+    series: "Gundam SEED",
+    scale: "1/100 MG",
+    price: 54,
+    oldPrice: null,
+    description: "Master Grade Freedom Gundam with wing system and beam rifle accessories.",
+    images: [
+      "https://images.pexels.com/photos/7161070/pexels-photo-7161070.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161083/pexels-photo-7161083.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161082/pexels-photo-7161082.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 18,
+    avgRating: 4.6,
+    ratingCount: 143,
+    isNew: false,
+    discountText: "",
+    category: "Model Kits",
+  },
+  {
+    name: "Strike Rouge + IWSP",
+    series: "Gundam SEED",
+    scale: "1/144 HG",
+    price: 27,
+    oldPrice: 30,
+    description: "High Grade Strike Rouge with IWSP pack and multiple weapon options.",
+    images: [
+      "https://images.pexels.com/photos/7161080/pexels-photo-7161080.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161083/pexels-photo-7161083.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161070/pexels-photo-7161070.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 0,
+    avgRating: 4.5,
+    ratingCount: 98,
+    isNew: false,
+    discountText: "-10%",
+    category: "Model Kits",
+  },
+  {
+    name: "Wing Gundam Zero EW",
+    series: "Gundam Wing: Endless Waltz",
+    scale: "1/100 MG",
+    price: 61,
+    oldPrice: null,
+    description: "Master Grade Wing Gundam Zero Endless Waltz version with feather effect parts.",
+    images: [
+      "https://images.pexels.com/photos/7161082/pexels-photo-7161082.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161080/pexels-photo-7161080.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161083/pexels-photo-7161083.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 14,
+    avgRating: 4.9,
+    ratingCount: 210,
+    isNew: false,
+    discountText: "",
+    category: "Model Kits",
+  },
+  {
+    name: "Exia Repair II",
+    series: "Gundam 00",
+    scale: "1/144 RG",
+    price: 36,
+    oldPrice: 40,
+    description: "Real Grade Exia Repair II with advanced articulation and detailed inner frame.",
+    images: [
+      "https://images.pexels.com/photos/7161083/pexels-photo-7161083.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161082/pexels-photo-7161082.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161070/pexels-photo-7161070.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 22,
+    avgRating: 4.7,
+    ratingCount: 132,
+    isNew: false,
+    discountText: "-10%",
+    category: "Model Kits",
+  },
+  {
+    name: "Dynames Gundam",
+    series: "Gundam 00",
+    scale: "1/100 MG",
+    price: 49,
+    oldPrice: null,
+    description: "Master Grade Dynames Gundam with sniper rifle and GN drive effects.",
+    images: [
+      "https://images.pexels.com/photos/7161070/pexels-photo-7161070.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161083/pexels-photo-7161083.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161080/pexels-photo-7161080.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 16,
+    avgRating: 4.6,
+    ratingCount: 87,
+    isNew: false,
+    discountText: "",
+    category: "Model Kits",
+  },
+  {
+    name: "Zeta Gundam Ver.2.0",
+    series: "Mobile Suit Zeta Gundam",
+    scale: "1/100 MG",
+    price: 58,
+    oldPrice: 65,
+    description: "Master Grade Zeta Gundam Ver.2.0 with transformation gimmick and improved articulation.",
+    images: [
+      "https://images.pexels.com/photos/7161080/pexels-photo-7161080.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161082/pexels-photo-7161082.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161083/pexels-photo-7161083.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 11,
+    avgRating: 4.8,
+    ratingCount: 160,
+    isNew: false,
+    discountText: "-10%",
+    category: "Model Kits",
+  },
+  {
+    name: "Sazabi Ver.Ka",
+    series: "Char's Counterattack",
+    scale: "1/100 MG",
+    price: 95,
+    oldPrice: null,
+    description: "Master Grade Sazabi Ver.Ka with extensive detail and weapon accessories.",
+    images: [
+      "https://images.pexels.com/photos/7161082/pexels-photo-7161082.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161080/pexels-photo-7161080.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161070/pexels-photo-7161070.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161083/pexels-photo-7161083.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 7,
+    avgRating: 4.9,
+    ratingCount: 245,
+    isNew: true,
+    discountText: "",
+    category: "Model Kits",
+  },
+  {
+    name: "Sinanju Stein (Narrative Ver.)",
+    series: "Gundam Narrative",
+    scale: "1/100 MG",
+    price: 74,
+    oldPrice: 82,
+    description: "Master Grade Sinanju Stein Narrative version with unique color scheme.",
+    images: [
+      "https://images.pexels.com/photos/7161083/pexels-photo-7161083.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161082/pexels-photo-7161082.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161070/pexels-photo-7161070.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 9,
+    avgRating: 4.7,
+    ratingCount: 134,
+    isNew: false,
+    discountText: "-10%",
+    category: "Model Kits",
+  },
+  {
+    name: "Gundam Barbatos Lupus",
+    series: "Iron-Blooded Orphans",
+    scale: "1/144 HG",
+    price: 25,
+    oldPrice: null,
+    description: "High Grade Gundam Barbatos Lupus with mace weapon and articulation.",
+    images: [
+      "https://images.pexels.com/photos/7161070/pexels-photo-7161070.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161080/pexels-photo-7161080.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161083/pexels-photo-7161083.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 0,
+    avgRating: 4.5,
+    ratingCount: 99,
+    isNew: false,
+    discountText: "",
+    category: "Model Kits",
+  },
+  {
+    name: "Gundam Kimaris Vidar",
+    series: "Iron-Blooded Orphans",
+    scale: "1/100 MG",
+    price: 47,
+    oldPrice: 52,
+    description: "Master Grade Gundam Kimaris Vidar with lance weapon and unique design.",
+    images: [
+      "https://images.pexels.com/photos/7161080/pexels-photo-7161080.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161082/pexels-photo-7161082.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161083/pexels-photo-7161083.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 13,
+    avgRating: 4.6,
+    ratingCount: 112,
+    isNew: false,
+    discountText: "-9%",
+    category: "Model Kits",
+  },
+  {
+    name: "Gundam Aerial",
+    series: "The Witch from Mercury",
+    scale: "1/144 HG",
+    price: 29,
+    oldPrice: null,
+    description: "High Grade Gundam Aerial from The Witch from Mercury series.",
+    images: [
+      "https://images.pexels.com/photos/7161082/pexels-photo-7161082.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161080/pexels-photo-7161080.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161070/pexels-photo-7161070.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 25,
+    avgRating: 4.8,
+    ratingCount: 190,
+    isNew: true,
+    discountText: "",
+    category: "Model Kits",
+  },
+  {
+    name: "Gundam Aerial Rebuild",
+    series: "The Witch from Mercury",
+    scale: "1/144 HG",
+    price: 31,
+    oldPrice: 35,
+    description: "High Grade Gundam Aerial Rebuild with enhanced armor and weapons.",
+    images: [
+      "https://images.pexels.com/photos/7161083/pexels-photo-7161083.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161082/pexels-photo-7161082.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161080/pexels-photo-7161080.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 19,
+    avgRating: 4.7,
+    ratingCount: 133,
+    isNew: false,
+    discountText: "-11%",
+    category: "Model Kits",
+  },
+  {
+    name: "Perfect Strike Gundam",
+    series: "G Gundam",
+    scale: "1/60 PG",
+    price: 120,
+    oldPrice: 135,
+    description: "Perfect Grade Perfect Strike Gundam with all weapon packs and LED system.",
+    images: [
+      "https://images.pexels.com/photos/7161070/pexels-photo-7161070.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161083/pexels-photo-7161083.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161082/pexels-photo-7161082.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161080/pexels-photo-7161080.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 0,
+    avgRating: 4.6,
+    ratingCount: 80,
+    isNew: false,
+    discountText: "-11%",
+    category: "Model Kits",
+  },
+  {
+    name: "Full Armor Unicorn (Green Psycho)",
+    series: "Gundam SEED",
+    scale: "1/144 RG",
+    price: 56,
+    oldPrice: null,
+    description: "Real Grade Full Armor Unicorn with green psycho-frame and weapon system.",
+    images: [
+      "https://images.pexels.com/photos/7161080/pexels-photo-7161080.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161083/pexels-photo-7161083.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161082/pexels-photo-7161082.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 17,
+    avgRating: 4.9,
+    ratingCount: 220,
+    isNew: false,
+    discountText: "",
+    category: "Model Kits",
+  },
+  {
+    name: "Hi-Nu Gundam Ver.Ka",
+    series: "Char's Counterattack",
+    scale: "1/100 MG",
+    price: 99,
+    oldPrice: 110,
+    description: "Master Grade Hi-Nu Gundam Ver.Ka with fin funnel effects and detailed inner frame.",
+    images: [
+      "https://images.pexels.com/photos/7161082/pexels-photo-7161082.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161080/pexels-photo-7161080.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161070/pexels-photo-7161070.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161083/pexels-photo-7161083.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 6,
+    avgRating: 5.0,
+    ratingCount: 260,
+    isNew: true,
+    discountText: "-10%",
+    category: "Model Kits",
+  },
+  {
+    name: "Professional Nippers Set",
+    series: "Tools",
+    scale: null,
+    price: 24,
+    oldPrice: 32,
+    description: "Premium single-blade nippers for clean cuts. Essential for any model builder.",
+    images: [
+      "https://images.pexels.com/photos/3951845/pexels-photo-3951845.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/3951843/pexels-photo-3951843.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/3951844/pexels-photo-3951844.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 50,
+    avgRating: 4.8,
+    ratingCount: 342,
+    isNew: false,
+    discountText: "-25%",
+    category: "Accessories",
+  },
+  {
+    name: "Precision Hobby Knife Set",
+    series: "Tools",
+    scale: null,
+    price: 15,
+    oldPrice: 19,
+    description: "Set of precision knives with multiple blade types for detailed cutting work.",
+    images: [
+      "https://images.pexels.com/photos/3951843/pexels-photo-3951843.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/3951845/pexels-photo-3951845.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/3951844/pexels-photo-3951844.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 45,
+    avgRating: 4.6,
+    ratingCount: 178,
+    isNew: false,
+    discountText: "-21%",
+    category: "Accessories",
+  },
+  {
+    name: "Sanding Sponge Set (6 Grits)",
+    series: "Tools",
+    scale: null,
+    price: 12,
+    oldPrice: 17,
+    description: "Complete sanding solution from 400 to 3000 grit for perfect surface finishing.",
+    images: [
+      "https://images.pexels.com/photos/3951844/pexels-photo-3951844.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/3951843/pexels-photo-3951843.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/3951845/pexels-photo-3951845.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 60,
+    avgRating: 4.7,
+    ratingCount: 267,
+    isNew: false,
+    discountText: "-29%",
+    category: "Accessories",
+  },
+  {
+    name: "Panel Line Accent Color Set",
+    series: "Paints & Finishes",
+    scale: null,
+    price: 18,
+    oldPrice: 23,
+    description: "Essential panel lining tools including black, brown, and gray accent colors.",
+    images: [
+      "https://images.pexels.com/photos/3951628/pexels-photo-3951628.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/3951630/pexels-photo-3951630.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/3951634/pexels-photo-3951634.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 40,
+    avgRating: 4.8,
+    ratingCount: 193,
+    isNew: false,
+    discountText: "-22%",
+    category: "Accessories",
+  },
+  {
+    name: "Gundam Marker Basic Set",
+    series: "Paints & Finishes",
+    scale: null,
+    price: 21,
+    oldPrice: 27,
+    description: "6 essential markers for detailing and touch-ups. Perfect for beginners.",
+    images: [
+      "https://images.pexels.com/photos/3951630/pexels-photo-3951630.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/3951628/pexels-photo-3951628.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/3951634/pexels-photo-3951634.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 55,
+    avgRating: 4.7,
+    ratingCount: 212,
+    isNew: false,
+    discountText: "-22%",
+    category: "Accessories",
+  },
+  {
+    name: "Metallic Paint Set (6 Colors)",
+    series: "Paints & Finishes",
+    scale: null,
+    price: 28,
+    oldPrice: 34,
+    description: "Premium metallic paints including gold, silver, bronze, and gunmetal.",
+    images: [
+      "https://images.pexels.com/photos/3951634/pexels-photo-3951634.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/3951630/pexels-photo-3951630.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/3951628/pexels-photo-3951628.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 35,
+    avgRating: 4.8,
+    ratingCount: 268,
+    isNew: true,
+    discountText: "-18%",
+    category: "Accessories",
+  },
+  {
+    name: "Acrylic Display Stand Set",
+    series: "Display",
+    scale: null,
+    price: 19,
+    oldPrice: 22,
+    description: "Clear display stands to pose and support your completed builds.",
+    images: [
+      "https://images.pexels.com/photos/2738508/pexels-photo-2738508.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161070/pexels-photo-7161070.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161083/pexels-photo-7161083.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 70,
+    avgRating: 4.6,
+    ratingCount: 154,
+    isNew: false,
+    discountText: "-14%",
+    category: "Accessories",
+  },
+  {
+    name: "LED Display Base",
+    series: "Display",
+    scale: null,
+    price: 32,
+    oldPrice: 39,
+    description: "Illuminated display base to showcase your favorite mobile suits.",
+    images: [
+      "https://images.pexels.com/photos/7161070/pexels-photo-7161070.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/2738508/pexels-photo-2738508.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/7161083/pexels-photo-7161083.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 25,
+    avgRating: 4.9,
+    ratingCount: 301,
+    isNew: true,
+    discountText: "-18%",
+    category: "Accessories",
+  },
+  {
+    name: "Universal Caution Decal Set",
+    series: "Decals",
+    scale: null,
+    price: 9,
+    oldPrice: 11,
+    description: "Water slide decals with caution markings, numbers, and logos for any kit.",
+    images: [
+      "https://images.pexels.com/photos/4484078/pexels-photo-4484078.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/3951841/pexels-photo-3951841.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/3951630/pexels-photo-3951630.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 80,
+    avgRating: 4.5,
+    ratingCount: 126,
+    isNew: false,
+    discountText: "-18%",
+    category: "Accessories",
+  },
+  {
+    name: "Metal Logo Emblem Pack",
+    series: "Decals",
+    scale: null,
+    price: 14,
+    oldPrice: 18,
+    description: "Self-adhesive metal emblems to add a premium finish to your bases.",
+    images: [
+      "https://images.pexels.com/photos/3951841/pexels-photo-3951841.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/4484078/pexels-photo-4484078.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/3951843/pexels-photo-3951843.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    stock: 65,
+    avgRating: 4.7,
+    ratingCount: 98,
+    isNew: false,
+    discountText: "-22%",
+    category: "Accessories",
+  },
+];
+
+const seedProducts = async () => {
+  try {
+    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/toysecommerce';
+    await mongoose.connect(mongoUri);
+    console.log('Connected to MongoDB');
+
+    await Product.deleteMany({});
+    console.log('Cleared existing products');
+
+    const createdProducts = await Product.insertMany(products);
+    console.log(`Successfully seeded ${createdProducts.length} products`);
+
+    await mongoose.connection.close();
+    console.log('Database connection closed');
+    process.exit(0);
+  } catch (error) {
+    console.error('Error seeding products:', error);
+    process.exit(1);
+  }
+};
+
+seedProducts();
+
