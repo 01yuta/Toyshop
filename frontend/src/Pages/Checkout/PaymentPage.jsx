@@ -150,6 +150,16 @@ const CardPaymentForm = ({
         <Text style={{ display: "block", marginBottom: 4, fontWeight: 500 }}>
           Thông tin thẻ *
         </Text>
+        <Text 
+          type="secondary" 
+          style={{ 
+            display: "block", 
+            marginBottom: 8, 
+            fontSize: "12px" 
+          }}
+        >
+          💡 Test card: 4242 4242 4242 4242 | Expiry: 12/25 | CVC: 123
+        </Text>
         <div
           id="card-element-wrapper"
           style={{
