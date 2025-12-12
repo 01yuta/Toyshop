@@ -28,7 +28,8 @@ router.post('/', authMiddleware, adminMiddleware, upload.single('image'), (req, 
   if (!req.file) {
     return res.status(400).json({ message: 'No file uploaded' });
   }
-  const fileUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+  const baseUrl = process.env.ASSET_BASE_URL || `${req.protocol}://${req.get('host')}`;
+  const fileUrl = `${baseUrl}/uploads/${req.file.filename}`;
   return res.status(201).json({
     message: 'Upload successful',
     url: fileUrl,

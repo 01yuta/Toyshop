@@ -11,6 +11,10 @@ const normalizeImageUrl = (url, baseUrl) => {
     return `${baseUrl}${url}`;
   }
 
+  if (url.startsWith('uploads/') || (!url.startsWith('http') && !url.startsWith('/') && url.includes('image-'))) {
+    return `${baseUrl}/uploads/${url}`;
+  }
+
   if (url.includes('localhost:3001') || url.includes('localhost:3000')) {
     try {
       const parsed = new URL(url);
