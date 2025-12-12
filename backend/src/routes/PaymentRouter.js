@@ -9,6 +9,7 @@ const stripe = process.env.STRIPE_SECRET_KEY
 router.post("/create-intent", async (req, res) => {
   try {
     if (!stripe) {
+      console.error("❌ Stripe is not configured - STRIPE_SECRET_KEY missing");
       return res.status(500).json({ message: "Stripe is not configured" });
     }
 
@@ -27,11 +28,15 @@ router.post("/create-intent", async (req, res) => {
       return res.status(400).json({ message: "Amount too small. Minimum is 50 cents" });
     }
 
+    console.log(`Creating payment intent: ${stripeAmount} ${stripeCurrency}`);
+
     const paymentIntent = await stripe.paymentIntents.create({
       amount: stripeAmount,
       currency: stripeCurrency,
       payment_method_types: ['card'],
     });
+
+    console.log(`✅ Payment intent created: ${paymentIntent.id}`);
 
     return res.json({
       clientSecret: paymentIntent.client_secret,
@@ -39,7 +44,12 @@ router.post("/create-intent", async (req, res) => {
       status: paymentIntent.status,
     });
   } catch (err) {
-    return res.status(500).json({ message: "Stripe error", error: err.message });
+    console.error("❌ Stripe create-intent error:", err.message);
+    console.error("Error details:", err);
+    return res.status(500).json({ 
+      message: "Stripe error", 
+      error: err.message 
+    });
   }
 });
 

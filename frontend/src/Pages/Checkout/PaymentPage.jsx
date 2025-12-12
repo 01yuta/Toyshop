@@ -301,7 +301,9 @@ const PaymentPage = () => {
             message.error(data?.message || "Lỗi tạo payment intent");
           }
         } catch (err) {
-          message.error("Lỗi kết nối server. Vui lòng thử lại.");
+          console.error("Payment intent error:", err);
+          const errorMsg = err.response?.data?.message || err.message || "Lỗi kết nối server. Vui lòng thử lại.";
+          message.error(errorMsg);
         }
       };
       createIntent();
