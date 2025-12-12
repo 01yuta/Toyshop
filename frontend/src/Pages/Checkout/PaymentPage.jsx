@@ -26,7 +26,11 @@ import api from "../../api/axiosClient";
 
 const { Title, Text } = Typography;
 
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
+const stripeKey = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY;
+if (!stripeKey) {
+  console.error("⚠️ REACT_APP_STRIPE_PUBLISHABLE_KEY is not set");
+}
+const stripePromise = stripeKey ? loadStripe(stripeKey) : null;
 
 const CardPaymentForm = ({ 
   clientSecret, 
@@ -147,31 +151,47 @@ const CardPaymentForm = ({
           Thông tin thẻ *
         </Text>
         <div
+          id="card-element-wrapper"
           style={{
             padding: "12px",
             border: "1px solid #d9d9d9",
             borderRadius: "6px",
             background: "white",
             minHeight: "40px",
+            width: "100%",
           }}
         >
-          <CardElement 
-            options={{
-              style: {
-                base: {
-                  fontSize: '16px',
-                  color: '#424770',
-                  '::placeholder': {
-                    color: '#aab7c4',
+          {stripe && elements ? (
+            <CardElement 
+              options={{
+                style: {
+                  base: {
+                    fontSize: '16px',
+                    color: '#424770',
+                    fontFamily: 'system-ui, -apple-system, sans-serif',
+                    '::placeholder': {
+                      color: '#aab7c4',
+                    },
+                  },
+                  invalid: {
+                    color: '#9e2146',
                   },
                 },
-                invalid: {
-                  color: '#9e2146',
-                },
-              },
-            }}
-            onReady={() => setIsCardReady(true)}
-          />
+                hidePostalCode: true,
+              }}
+              onReady={() => {
+                setIsCardReady(true);
+                console.log("✅ CardElement ready");
+              }}
+              onChange={(e) => {
+                if (e.error) {
+                  console.error("CardElement error:", e.error);
+                }
+              }}
+            />
+          ) : (
+            <Text type="secondary">Đang tải form thẻ...</Text>
+          )}
         </div>
       </div>
 
@@ -489,7 +509,13 @@ const PaymentPage = () => {
               </div>
 
               {method === "CARD" ? (
-                clientSecret ? (
+                !stripePromise ? (
+                  <div style={{ textAlign: "center", padding: "20px" }}>
+                    <Text type="danger">
+                      Stripe chưa được cấu hình. Vui lòng liên hệ admin.
+                    </Text>
+                  </div>
+                ) : clientSecret ? (
                   <Elements stripe={stripePromise} options={{ clientSecret }}>
                     <CardPaymentForm 
                       clientSecret={clientSecret}
