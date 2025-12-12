@@ -30,10 +30,11 @@ app.use(cors({
       return callback(null, true);
     }
     
-    if (origin.includes('mechazone.site')) {
+    if (origin.includes('mechazone.site') || origin.includes('www.mechazone.site')) {
       return callback(null, true);
     }
     
+    console.log(`⚠️ CORS blocked origin: ${origin}`);
     return callback(new Error(`Origin not allowed by CORS: ${origin}`));
   },
   credentials: true,
