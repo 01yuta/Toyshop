@@ -52,7 +52,7 @@ const DEFAULT_FORM_VALUES = {
   stock: 0,
   description: "",
   discountText: "",
-  isNew: false,
+  isNewProduct: false,
   images: "",
   specifications: "",
 };
@@ -142,7 +142,7 @@ const AdminProducts = () => {
         stock: product.stock ?? 0,
         description: product.description || "",
         discountText: product.discountText || "",
-        isNew: Boolean(product.isNew),
+        isNewProduct: Boolean(product.isNewProduct),
         images: Array.isArray(product.images)
           ? product.images.join("\n")
           : product.images || "",
@@ -208,7 +208,7 @@ const handleImageUpload = useCallback(
         price: Number(values.price) || 0,
         stock: Number(values.stock) || 0,
         images: normalizedImages,
-        isNew: Boolean(values.isNew),
+        isNewProduct: Boolean(values.isNewProduct),
       };
 
       if (values.oldPrice !== null && values.oldPrice !== undefined && values.oldPrice !== "") {
@@ -344,11 +344,11 @@ const handleImageUpload = useCallback(
       },
       {
         title: "Nhãn",
-        dataIndex: "isNew",
-        key: "isNew",
-        render: (isNew) => (
+        dataIndex: "isNewProduct",
+        key: "isNewProduct",
+        render: (isNewProduct) => (
           <Space size="small">
-            {isNew && <Tag color="magenta">New</Tag>}
+            {isNewProduct && <Tag color="magenta">New</Tag>}
           </Space>
         ),
       },
@@ -503,7 +503,7 @@ const handleImageUpload = useCallback(
             </Form.Item>
           </div>
 
-          <Form.Item name="isNew" label="New Arrival" valuePropName="checked">
+          <Form.Item name="isNewProduct" label="New Arrival" valuePropName="checked">
             <Switch />
           </Form.Item>
 

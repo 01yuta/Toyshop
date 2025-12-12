@@ -13,7 +13,7 @@ const productSchema = new mongoose.Schema(
     stock: { type: Number, default: 0 },
     avgRating: { type: Number, default: 0 },
     ratingCount: { type: Number, default: 0 },
-    isNew: { type: Boolean, default: false },
+    isNewProduct: { type: Boolean, default: false },
     discountText: { type: String, default: "" },
     category: { type: String, default: "Model Kits" },
   },

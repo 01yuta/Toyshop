@@ -132,7 +132,7 @@ const Models = () => {
       reviews: product.ratingCount || 0,
       price: product.price,
       oldPrice: product.oldPrice || null,
-      isNew: product.isNew || false,
+      isNew: product.isNewProduct || false,
       discountText: product.discountText || "",
       inStock: (product.stock || 0) > 0,
       image: product.images && product.images.length > 0 ? product.images[0] : "",

@@ -14,9 +14,13 @@ const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:3000')
   .map((o) => o.trim())
   .filter(Boolean);
 
+if (process.env.NODE_ENV !== 'production') {
+  allowedOrigins.push('http://localhost:3000');
+}
+
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin) return callback(null, true); // allow non-browser requests
+    if (!origin) return callback(null, true);
     if (allowedOrigins.some((o) => origin === o)) {
       return callback(null, true);
     }
