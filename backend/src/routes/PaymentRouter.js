@@ -2,15 +2,31 @@ const express = require("express");
 const router = express.Router();
 const Stripe = require("stripe");
 
-const stripe = process.env.STRIPE_SECRET_KEY 
-  ? new Stripe(process.env.STRIPE_SECRET_KEY) 
-  : null;
+let stripe = null;
+
+try {
+  const stripeKey = process.env.STRIPE_SECRET_KEY;
+  if (stripeKey && stripeKey.trim()) {
+    if (stripeKey.startsWith('sk_test_') || stripeKey.startsWith('sk_live_')) {
+      stripe = new Stripe(stripeKey.trim());
+      console.log("✅ Stripe initialized successfully");
+    } else {
+      console.error("❌ Invalid STRIPE_SECRET_KEY format. Must start with sk_test_ or sk_live_");
+    }
+  } else {
+    console.warn("⚠️ STRIPE_SECRET_KEY not set - Stripe payment will not work");
+  }
+} catch (err) {
+  console.error("❌ Failed to initialize Stripe:", err.message);
+}
 
 router.post("/create-intent", async (req, res) => {
   try {
     if (!stripe) {
-      console.error("❌ Stripe is not configured - STRIPE_SECRET_KEY missing");
-      return res.status(500).json({ message: "Stripe is not configured" });
+      console.error("❌ Stripe is not configured - STRIPE_SECRET_KEY missing or invalid");
+      return res.status(503).json({ 
+        message: "Payment service is temporarily unavailable. Please try again later." 
+      });
     }
 
     const { amount, currency } = req.body;
