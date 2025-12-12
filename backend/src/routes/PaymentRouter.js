@@ -7,20 +7,35 @@ let stripeError = null;
 
 try {
   const stripeKey = process.env.STRIPE_SECRET_KEY;
-  if (stripeKey && typeof stripeKey === 'string' && stripeKey.trim()) {
-    const trimmedKey = stripeKey.trim();
-    if (trimmedKey.startsWith('sk_test_') || trimmedKey.startsWith('sk_live_')) {
-      stripe = new Stripe(trimmedKey, {
-        apiVersion: '2024-12-18.acacia',
-      });
-      console.log("✅ Stripe initialized successfully");
-    } else {
-      stripeError = "Invalid STRIPE_SECRET_KEY format. Must start with sk_test_ or sk_live_";
-      console.error(`❌ ${stripeError}`);
-    }
-  } else {
+  
+  if (!stripeKey) {
     stripeError = "STRIPE_SECRET_KEY not set";
     console.warn(`⚠️ ${stripeError} - Stripe payment will not work`);
+  } else if (typeof stripeKey !== 'string') {
+    stripeError = "STRIPE_SECRET_KEY must be a string";
+    console.error(`❌ ${stripeError}`);
+  } else {
+    const trimmedKey = stripeKey.trim();
+    const keyLength = trimmedKey.length;
+    const keyPrefix = trimmedKey.substring(0, Math.min(8, keyLength));
+    
+    if (keyLength === 0) {
+      stripeError = "STRIPE_SECRET_KEY is empty";
+      console.error(`❌ ${stripeError}`);
+    } else if (!trimmedKey.startsWith('sk_test_') && !trimmedKey.startsWith('sk_live_')) {
+      stripeError = `Invalid STRIPE_SECRET_KEY format. Must start with sk_test_ or sk_live_. Got: ${keyPrefix}... (length: ${keyLength})`;
+      console.error(`❌ ${stripeError}`);
+    } else {
+      try {
+        stripe = new Stripe(trimmedKey, {
+          apiVersion: '2024-12-18.acacia',
+        });
+        console.log(`✅ Stripe initialized successfully (key prefix: ${keyPrefix}...)`);
+      } catch (initErr) {
+        stripeError = `Failed to initialize Stripe: ${initErr.message}`;
+        console.error(`❌ ${stripeError}`);
+      }
+    }
   }
 } catch (err) {
   stripeError = err.message || "Failed to initialize Stripe";
