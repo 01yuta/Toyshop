@@ -21,9 +21,19 @@ if (process.env.NODE_ENV !== 'production') {
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
+    
     if (allowedOrigins.some((o) => origin === o)) {
       return callback(null, true);
     }
+    
+    if (origin.includes('.vercel.app')) {
+      return callback(null, true);
+    }
+    
+    if (origin.includes('mechazone.site')) {
+      return callback(null, true);
+    }
+    
     return callback(new Error(`Origin not allowed by CORS: ${origin}`));
   },
   credentials: true,
